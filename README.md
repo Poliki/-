@@ -1,24 +1,15 @@
-# font-end
+#### 简易图书管理系统
 
-## Project setup
-```
-npm install
-```
+-----
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+##### 项目介绍
+从vue多页面转移回使用脚手架的单页面组件，主要是多页面开发过程中不熟练，重用的组件抽象出来不熟练
 
-### Compiles and minifies for production
-```
-npm run build
-```
+-----
 
-### Lints and fixes files
-```
-npm run lint
-```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+##### 项目使用
+
+
+-----
