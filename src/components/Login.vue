@@ -72,8 +72,8 @@
         this.$refs.loginFormRef.resetFields()
       },
       register() {
-        /* this.$router.push('/register') */
-        this.$message.success("去注册")
+        this.$router.push('/register')
+        /* this.$message.success("去注册") */
       },
       login() {
         this.$refs.loginFormRef.validate(async valid => {

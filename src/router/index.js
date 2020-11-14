@@ -9,9 +9,11 @@ Vue.use(VueRouter)
 /* 子路由都是作为Home的Children下注册 */
 const router = new VueRouter({
   routes: [
-    { path: '/', redirect: '/login' },
-    { path: "/register", name: Register, component: Register },
-    { path: "/login", name: Login, component: Login }
+    { path: "/", redirect: "/login" },
+    { path: "/register", component: Register },
+    { path: "/login", component: Login },
+    { path:"/home", component: Home,children:[{ path: '/myBorrow', component: myBorrow }]
+  }
     /* {
       path: "/",
       name: "Home",
@@ -26,16 +28,16 @@ const router = new VueRouter({
 })
 
 /* 挂载路由导航守卫 */
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   // to 将要访问的路径
   // from 代表从哪个路径跳转而来
   // next 是一个函数，表示放行
   // next()  放行  next('/login')  强制跳转
 
-  if (to.path === "/login" && to.path === "/register") return next()
+  if (to.path === "/register") return next()
   // 获取token
   const tokenStr = window.sessionStorage.getItem("token")
   if (!tokenStr) return next("/login")
   next()
-})
+}) */
 export default router
