@@ -3,6 +3,8 @@ import VueRouter from "vue-router"
 import Register from "../components/Register.vue"
 import Login from "../components/Login.vue"
 import Home from "../views/Home.vue"
+import Welcome from "../views/welcome.vue"
+import myBorrow from "../views/myBorrow.vue"
 
 Vue.use(VueRouter)
 
@@ -12,7 +14,7 @@ const router = new VueRouter({
     { path: "/", redirect: "/login" },
     { path: "/register", component: Register },
     { path: "/login", component: Login },
-    { path:"/home", component: Home,children:[{ path: '/myBorrow', component: myBorrow }]
+    { path:"/home", component: Home,redirect: '/welcome',children:[{ path: '/welcome', component: Welcome },{ path: '/myBorrow', component: myBorrow }]
   }
     /* {
       path: "/",
