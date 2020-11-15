@@ -9,10 +9,10 @@
           <el-menu-item index="/myBorrow">我的借阅</el-menu-item>
           <el-menu-item @click="logout">注销</el-menu-item>
         </el-submenu>
-        <el-submenu index="3" :disabled="admin">
+        <el-submenu index="3">
           <template slot="title">管理中心</template>
-          <el-menu-item index="/bookManage">书籍管理</el-menu-item>
-          <el-menu-item index="/permissionManage">权限管理</el-menu-item>
+          <el-menu-item index="/bookManage" :disabled="adminstrator">书籍管理</el-menu-item>
+          <el-menu-item index="/permissionManage" :disabled="superAdministrator">权限管理</el-menu-item>
         </el-submenu>
         <el-menu-item index="4">当前用户:{{username}}</el-menu-item>
       </el-menu>
@@ -33,17 +33,43 @@
         /* username登录后获取复制到data渲染到页面上 */
         username: "陈小虎",
         /* admin判断是否有权限 */
-        admin: false,
+        adminstrator: true,
+        superAdministrator: true,
         /* 导航组件 */
         activeIndex2: '100',
       }
     },
+    created() {
+      this.init()
+    },
     methods: {
+      async init() {
+        this.username = window.sessionStorage.getItem('username'),
+          this.perm = window.sessionStorage.getItem('perm'),
+          this.role = window.sessionStorage.getItem('role')
+        /* 根据权限修改视图 */
+        if (this.role === "super-administrator") {
+          this.superAdministrator = false,
+          this.adminstrator = false
+        }
+        if (this.role === "adminstrator") {
+          this.adminstrator = false
+        }
+        /* console.log(this.perm)
+        const arrP = this.perm.split("-")
+        console.log(arrP)
+        for (var i = 0; i < arrP.length; i++) {
+          if (arrP[i] === "A") {
+            console.log(arrP[i] + ""+"第"+i+"个");
+            this.admin = false
+          }
+        } */
+      },
       handleSelect(key, keyPath) {
         console.log(key, keyPath)
       },
       logout() {
-        window.sessionStorage.setItem('token', null)
+        window.sessionStorage.clear()
         this.$router.push('/login')
       }
     }

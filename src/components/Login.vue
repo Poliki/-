@@ -90,9 +90,9 @@
           //   1.1 项目中出了登录之外的其他API接口，必须在登录之后才能访问
           //   1.2 token 只应在当前网站打开期间生效，所以将 token 保存在 sessionStorage 中
           window.sessionStorage.setItem('token', res.data.token)
-          window.sessionStorage.setItem('username', res.data.username)
-          window.sessionStorage.setItem('perm', res.data.perm)
-          window.sessionStorage.setItem('role', res.data.role)
+          window.sessionStorage.setItem('username', res.data.user.username)
+          window.sessionStorage.setItem('perm', res.data.user.perm)
+          window.sessionStorage.setItem('role', res.data.user.role)
           // 2. 通过编程式导航跳转到后台主页，路由地址是 /home
           /* console.log("直接跳过去") */
           this.$router.push('/home')

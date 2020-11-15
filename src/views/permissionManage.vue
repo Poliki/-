@@ -1,50 +1,52 @@
 <template>
-    <div>
-  <!-- 卡片视图 -->
-  <el-card>
-    <!-- 角色列表区域 -->
-    <el-table :data="rolelist" border stripe>
-      <!-- 索引列 -->
-      <el-table-column type="index"></el-table-column>
-      <el-table-column label="角色名称" prop="uName"></el-table-column>
-      <el-table-column label="用户角色" prop="uRole"></el-table-column>
-      <el-table-column label="角色权限" prop="uPermission"></el-table-column>
-      <el-table-column label="用户状态">
-        <template slot-scope="scope">
-          <el-switch v-model="scope.row.uState" @change="userStateChanged(scope.row)">
-          </el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="300px">
-        <template slot-scope="scope">
-          <el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteUser(scope.row.uId)">删除</el-button>
-          <el-button size="mini" type="warning" icon="el-icon-setting" @click="showSetRightDialog(scope.row)">分配权限
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-  </el-card>
-  <!-- 分配权限的对话框 -->
-  <el-dialog title="修改用户权限" :visible.sync="dialogVisible" width="30%">
-    <!-- :model="rightslist"  -->
-    <el-form label-width="80px" :model="rightslist">
-      <el-form-item label="权限列表">
-        <el-checkbox-group v-model="items">
-          <el-checkbox v-for="i in rightslist.permission" :label="i" :key="i">{{i}}</el-checkbox>
-          <el-checkbox label="add" >{{"增"}}</el-checkbox>
-              <el-checkbox label="delete">{{"删"}}</el-checkbox>
-              <el-checkbox label="update">{{"改"}}</el-checkbox>
-              <el-checkbox label="search">{{"查"}}</el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="modifyPermission()">修改</el-button>
-        <el-button @click="setClose()">取消</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <div>
+    <!-- 卡片视图 -->
+    <el-card>
+      <!-- 角色列表区域 -->
+      <el-table :data="rolelist" border stripe>
+        <!-- 索引列 -->
+        <el-table-column type="index"></el-table-column>
+        <el-table-column label="角色名称" prop="username"></el-table-column>
+        <el-table-column label="用户角色" prop="role"></el-table-column>
+        <el-table-column label="用户电话" prop="phone"></el-table-column>
+        <el-table-column label="用户邮箱" prop="email"></el-table-column>
+        <el-table-column label="用户性别" prop="sex"></el-table-column>
+        <el-table-column label="用户状态">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.state" @change="userStateChanged(scope.row)">
+            </el-switch>
+          </template>
+        </el-table-column>
 
-</div>
+        <el-table-column label="操作" width="300px">
+          <template slot-scope="scope">
+            <el-button size="mini" type="warning" icon="el-icon-setting" @click="showSetRightDialog(scope.row)">分配权限
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+    <!-- 分配权限的对话框 -->
+    <el-dialog title="修改用户权限" :visible.sync="dialogVisible" width="30%">
+      <!-- :model="rightslist"  -->
+      <el-form label-width="80px" :model="rightslist">
+        <el-form-item label="权限列表">
+          <el-checkbox-group v-model="items">
+            <el-checkbox v-for="i in rightslist.permission" :label="i" :key="i">{{i}}</el-checkbox>
+            <el-checkbox label="add">{{"增"}}</el-checkbox>
+            <el-checkbox label="delete">{{"删"}}</el-checkbox>
+            <el-checkbox label="update">{{"改"}}</el-checkbox>
+            <el-checkbox label="search">{{"查"}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="modifyPermission()">修改</el-button>
+          <el-button @click="setClose()">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+  </div>
 </template>
 
 <script>
@@ -67,6 +69,11 @@
           "uName": "admin",
           "uRole": "admin",
           "uPermission": true
+        },
+        /* 用来分页的 */
+        page: {
+          "currentPage": "1",
+          "pageSize": "20"
         },
         // 控制分配权限对话框的显示与隐藏
         setRightDialogVisible: false,
@@ -94,12 +101,12 @@
         console.log("--------- 这是开始是获取所有角色的列表 ---------")
         const {
           data: res
-        } = await this.$http.get('user/getUser')
+        } = await this.$http.post('user/getUser', this.page)
 
         if (res.code !== 200) {
           return this.$message.error('获取角色列表失败！')
         }
-        console.log("接口调用返回的数据：" + res)
+        console.log("接口调用返回的数据：" + res.data)
         //  赋值到rolelist渲染到列表上
         this.rolelist = res.data
         //  赋值后的rolelist
@@ -109,86 +116,68 @@
         console.log(this.rightslist)
         console.log("有没有东西")
         for (var i = 0; i < this.rolelist.length; i++) {
+          var state = this.rolelist[i].state
+          if (state == 0) {
+            this.rolelist[i].state = false
+          } else if (state == 1) {
+            this.rolelist[i].state = true
+          }
+        }
+        /* for (var i = 0; i < this.rolelist.length; i++) {
 
-          /* this.rolelistA.uId =this.rolelist[i].uId
+          this.rolelistA.uId =this.rolelist[i].uId
             console.log(this.rolelistA.uId)
             
             this.rolelistA.uName=this.rolelist[i].uName
             console.log(this.rolelistA.uName)
   
             this.rolelistA.uRole=this.rolelist[i].uRole
-            console.log(this.rolelistA.uRole) */
+            console.log(this.rolelistA.uRole)
           var state = this.rolelist[i].uState
           if (state == 0) {
             this.rolelist[i].uState = false
           } else if (state == 1) {
             this.rolelist[i].uState = true
-          }
-          /*  var a = this.rolelist[i].uPermission
-            console.log(a)
-            if(a !== 'null'){
-              this.rolelist[i].uState = true
-            console.log(this.rolelist[i].uPermission)
-            console.log(this.rolelist[i].uState)
-          } else{
-          this.rolelist[i].uState = false
+          } */
+        /*  var a = this.rolelist[i].uPermission
+          console.log(a)
+          if(a !== 'null'){
+            this.rolelist[i].uState = true
           console.log(this.rolelist[i].uPermission)
           console.log(this.rolelist[i].uState)
-          
-          } */
+        } else{
+        this.rolelist[i].uState = false
+        console.log(this.rolelist[i].uPermission)
+        console.log(this.rolelist[i].uState)
+        
+        } */
 
-          /* 创建修改权限的表格data */
-          var tempItems = ["add", "delete", "update", "search"]
-          this.rightslist = {}
-          this.items = []
-          this.rightslist.permission = tempItems
-        }
+        /* 创建修改权限的表格data */
+        /* var tempItems = ["add", "delete", "update", "search"]
+        this.rightslist = {}
+        this.items = []
+        this.rightslist.permission = tempItems */
+        /* } */
         console.log("有没有东西2")
         console.log("--------- 这是是获取所有角色的列表结束 ---------")
-      },
-      // 删除用户
-      async deleteUser(uId) {
-        console.log("--------- 这是开始是删除用户 ---------")
-        const confirmResult = await this.$confirm(
-          '此操作将永久删除该用户, 是否继续?',
-          '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }
-        ).catch(err => err)
-
-        if (confirmResult !== 'confirm') {
-          return this.$message.info('取消了删除！')
-        }
-        console.log(uId)
-        const {
-          data: res
-        } = await this.$http.post("user/deleteUser", {
-          uId: uId
-        })
-        /* 重新渲染页面 */
-        this.getRolesList()
-        console.log("--------- 这是是删除用户结束 ---------")
-
       },
       /* switch开关 */
       async userStateChanged(userinfo) {
         console.log("--------- 这是开始是控制开关 ---------")
-        console.log(userinfo.uState)
-        if (userinfo.uState == true) {
+        console.log(userinfo.state)
+        if (userinfo.state == true) {
           const {
             data: res
-          } = await this.$http.post("user/setUser", {
-            uId: userinfo.uId,
-            uState: 1
+          } = await this.$http.post("user/setuser", {
+            id: userinfo.id,
+            state: 1
           })
-        } else if (userinfo.uState == false) {
+        } else if (userinfo.state == false) {
           const {
             data: res
-          } = await this.$http.post("user/setUser", {
-            uId: userinfo.uId,
-            uState: 0
+          } = await this.$http.post("user/setuser", {
+            id: userinfo.id,
+            state: 0
           })
         }
         this.getRolesList()
