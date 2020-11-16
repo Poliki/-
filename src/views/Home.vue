@@ -20,10 +20,9 @@
       height: 1px;"></el-header>
       <el-main style="   background-image: linear-gradient(to bottom right, #CCFBFF , #EF96C5);
       height: 100%;">
-
         <!-- 路由占位符 -->
-        <router-view></router-view>
-      </el-main>
+        <router-view></router-view>        
+      </el-main>     
     </el-container>
   </el-container>
 </template>
@@ -52,20 +51,11 @@
         /* 根据权限修改视图 */
         if (this.role === "super-adminstrator") {
           this.superAdministrator = false,
-          this.adminstrator = false
+            this.adminstrator = false
         }
         if (this.role === "adminstrator") {
           this.adminstrator = false
         }
-        /* console.log(this.perm)
-        const arrP = this.perm.split("-")
-        console.log(arrP)
-        for (var i = 0; i < arrP.length; i++) {
-          if (arrP[i] === "A") {
-            console.log(arrP[i] + ""+"第"+i+"个");
-            this.admin = false
-          }
-        } */
       },
       handleSelect(key, keyPath) {
         console.log(key, keyPath)

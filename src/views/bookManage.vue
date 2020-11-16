@@ -7,6 +7,9 @@
       <el-input placeholder="请输入内容" suffix-icon="el-icon-search" v-model="searchPage.s"
         style="width: 300px;margin-left: 20px;" @change="searchBook">
       </el-input>
+      <el-pagination background layout="prev, pager, next" :total="30" :current-page="currentPage"
+      @current-change="pushPage" style=" position: absolute;left: 50%;top:120px;transform: translate(-30%, -50%);">
+    </el-pagination>
       <!-- 角色列表区域 -->
       <el-table :data="books" border stripe>
         <el-table-column label="书的编号" prop="id"></el-table-column>
@@ -23,9 +26,6 @@
       </el-table>
     </el-card>
     <!-- 卡片视图结束 -->
-
-
-
     <!-- 新增书籍 -->
     <el-dialog title="书籍信息" :visible.sync="dialogFormVisible">
       <el-form :model="insertTable">
@@ -57,7 +57,6 @@
       </div>
     </el-dialog>
     <!-- 新增书籍结束 -->
-
     <!-- 修改书籍 -->
     <el-dialog title="书籍信息" :visible.sync="UDPdialogFormVisible">
       <el-form :model="UDPTable">
@@ -89,7 +88,17 @@
       </div>
     </el-dialog>
     <!-- 修改书籍结束 -->
-
+    <!-- 修改类型 -->
+    <el-dialog title="管理书籍类型" :visible.sync="UDPdialogBookKind">
+      <el-tag :key="tag.kind" v-for="tag in option" closable :disable-transitions="false" @close="handleClose(tag)">
+        {{tag.kind}}
+      </el-tag>
+      <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue" ref="saveTagInput" size="small"
+        @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm" >
+      </el-input>
+      <el-button v-else class="button-new-tag" size="small" @click="showInput" style="margin-left: 10px;">+ New Tag</el-button>
+    </el-dialog>
+    <!-- 修改类型结束 -->
   </div>
 </template>
 <script>
@@ -99,18 +108,20 @@
         /* 分页参数 */
         searchPage: {
           currentPage: "1",
-          pageSize: "20",
+          pageSize: "10",
           s: ""
         },
         /* 初始化参数 */
         page: {
           "currentPage": "1",
-          "pageSize": "20"
+          "pageSize": "10"
         },
         books: {},
         /* 添加书籍的表单 */
         dialogFormVisible: false,
-
+        UDPKINDS: [],
+        inputVisible: false,
+        inputValue: '',
         form: {
           name: '',
           region: '',
@@ -136,10 +147,10 @@
         UDPTable: [],
         /* 分割 */
         option: {},
-        appi: {}
+        appi: {},
+        /* 修改类型 */
+        UDPdialogBookKind: false
       }
-
-
     },
     created() {
       this.init()
@@ -189,13 +200,13 @@
         console.log("res:" + res)
         console.log(this.insertTable)
         this.$message.success("添加成功!")
-
         this.dialogFormVisible = false
         this.insertTable = {}
         this.init()
       },
       updKinds() {
-        this.dialogFormVisible = true
+        this.UDPdialogBookKind = true
+        this.getKinds()
       },
       /* 修改书籍确定的按钮 */
       async UDPBOOK() {
@@ -223,9 +234,67 @@
         } = await this.$http.post('book/getKind')
         console.log(res)
         this.option = res.data
+      },
+      handleClose(tag) {
+        const {
+          data: res
+        } = this.$http.post('book/deleteKind', {
+          "id": tag.id
+        })
+        this.getKinds()
+        this.UDPdialogBookKind =false
+      },
+      showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+      handleInputConfirm() {
+        let inputValue = this.inputValue;
+        /* if (inputValue) {
+          this.dynamicTags.push(inputValue);
+        } */
+        const {
+          data: res
+        } = this.$http.post('book/insertKind', {
+          "kind": inputValue
+        })
+        this.inputVisible = false;
+        this.inputValue = '';
+        this.UDPdialogBookKind = false
+        this.getKinds()
+      },
+      async pushPage(currentPage) {
+        console.log(currentPage)
+        this.page.currentPage = currentPage
+        const {
+          data: res
+        } = await this.$http.post('book/getBook', this.page)
+        console.log(res)
+        this.books = res.data
       }
     }
   }
 
 </script>
-<style></style>
+<style>
+  .el-tag+.el-tag {
+    margin-left: 10px;
+  }
+
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+
+</style>

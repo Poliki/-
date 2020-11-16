@@ -3,6 +3,9 @@
     <el-input placeholder="请输入内容" suffix-icon="el-icon-search" v-model="searchPage.s"
       style="width: 300px;margin-left: 58px;" @change="searchBook">
     </el-input>
+    <el-pagination background layout="prev, pager, next" :total="30" :current-page="currentPage"
+      @current-change="pushPage" style=" position: absolute;left: 50%;top:120px;transform: translate(-30%, -50%);">
+    </el-pagination>
     <el-row>
       <!-- span是卡片的宽度 offset是-->
       <el-col :span="3" v-for="book in books" :key="book.id" :offset="1">
@@ -19,6 +22,7 @@
         </el-card>
       </el-col>
     </el-row>
+
   </el-card>
 </template>
 <style>
@@ -40,16 +44,17 @@
         /* 用来分页的 */
         page: {
           "currentPage": "1",
-          "pageSize": "20"
+          "pageSize": "12"
         },
         /* 赋值渲染书籍列表 */
         books: [],
         /* 搜索框 */
         searchPage: {
           currentPage: "1",
-          pageSize: "20",
+          pageSize: "15",
           s: ""
         },
+        currentPage: 1
       }
     },
     created() {
@@ -88,6 +93,15 @@
         console.log(res.data.length)
         this.books = res.data
 
+      },
+      async pushPage(currentPage) {
+        console.log(currentPage)
+        this.page.currentPage = currentPage
+        const {
+          data: res
+        } = await this.$http.post('book/getBook', this.page)
+        console.log(res)
+        this.books = res.data
       }
     }
   }
