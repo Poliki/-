@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card style="height: 1200px;">
     <el-input placeholder="请输入内容" suffix-icon="el-icon-search" v-model="searchPage.s"
       style="width: 300px;margin-left: 58px;" @change="searchBook">
     </el-input>
@@ -8,9 +8,8 @@
       <el-col :span="3" v-for="book in books" :key="book.id" :offset="1">
         <el-card :body-style="{ padding: '10px',width: '200px'}" class="margin">
           <div style="padding: 14px;">
-            <p>{{book.bookname}}</p>
-
-            <p>{{book.count}}</p>
+            <strong style="font-size: 15px;">《{{book.bookname}}》</strong>
+            <p>数量：{{book.count}}</p>
             <p>{{book.pub}}</p>
             <p>{{book.kind}}</p>
             <div class="bottom clearfix">
@@ -75,6 +74,7 @@
           this.$message.error("借书失败")
         }
         this.$message.success("借书成功")
+        this.init()
       },
       async searchBook() {
         const {

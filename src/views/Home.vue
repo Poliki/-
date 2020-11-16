@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 500px; border: 1px solid #eee">
-    <el-container>
+    <el-container style="height: 18000px;">
       <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect"
         background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
         <el-menu-item index="/home">首页</el-menu-item>
@@ -14,10 +14,12 @@
           <el-menu-item index="/bookManage" :disabled="adminstrator">书籍管理</el-menu-item>
           <el-menu-item index="/permissionManage" :disabled="superAdministrator">权限管理</el-menu-item>
         </el-submenu>
-        <el-menu-item index="4">当前用户:{{username}}</el-menu-item>
+        <el-menu-item index="#">当前用户:{{username}}</el-menu-item>
       </el-menu>
-      <el-header></el-header>
-      <el-main>
+      <el-header style="   background-image: linear-gradient(to bottom right, #ffffff , #ffffff);
+      height: 1px;"></el-header>
+      <el-main style="   background-image: linear-gradient(to bottom right, #CCFBFF , #EF96C5);
+      height: 100%;">
 
         <!-- 路由占位符 -->
         <router-view></router-view>
@@ -48,7 +50,7 @@
           this.perm = window.sessionStorage.getItem('perm'),
           this.role = window.sessionStorage.getItem('role')
         /* 根据权限修改视图 */
-        if (this.role === "super-administrator") {
+        if (this.role === "super-adminstrator") {
           this.superAdministrator = false,
           this.adminstrator = false
         }

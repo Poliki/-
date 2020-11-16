@@ -27,49 +27,24 @@
       </el-table>
     </el-card>
     <!-- 分配权限的对话框 -->
-    <el-dialog title="修改用户权限" :visible.sync="dialogVisible" width="30%">
-      <!-- :model="rightslist"  -->
-      <el-form label-width="80px" :model="rightslist">
-        <el-form-item label="权限列表">
-          <el-checkbox-group v-model="items">
-            <el-checkbox v-for="i in rightslist.permission" :label="i" :key="i">{{i}}</el-checkbox>
-            <el-checkbox label="add">{{"增"}}</el-checkbox>
-            <el-checkbox label="delete">{{"删"}}</el-checkbox>
-            <el-checkbox label="update">{{"改"}}</el-checkbox>
-            <el-checkbox label="search">{{"查"}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="modifyPermission()">修改</el-button>
-          <el-button @click="setClose()">取消</el-button>
-        </el-form-item>
-      </el-form>
+    <el-dialog title="修改用户权限" :visible.sync="dialogVisible" width="300px">
+      <el-select v-model="changeRole" placeholder="选择类型" style="margin-top: 30px;">
+        <el-option v-for='item in option' :value='item' :key="item"></el-option>
+      </el-select>
+      <div style="margin: 40px 0;"></div>
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="modifyRole">确 定</el-button>
     </el-dialog>
-
   </div>
 </template>
-
 <script>
   export default {
     data() {
       return {
         // 修改权限的表单
         items: [],
-        /* items:["1","2"],
-          cities:[
-          {id:'add',name:'增'},
-          {id:'delete',name:'删'},
-          {id:'update',name:'改'},
-          {id:'search',name:'查'} 
-        ],*/
         // 所有角色列表数据
         rolelist: {},
-        rolelistA: {
-          "uId": 0,
-          "uName": "admin",
-          "uRole": "admin",
-          "uPermission": true
-        },
         /* 用来分页的 */
         page: {
           "currentPage": "1",
@@ -89,6 +64,8 @@
         dialogVisible: false,
         /* 获取修改的id */
         udpId: "",
+        changeRole: "",
+        option: ["super-adminstrator", "adminstrator", "user"],
         userPermission: []
       }
     },
@@ -117,47 +94,12 @@
         console.log("有没有东西")
         for (var i = 0; i < this.rolelist.length; i++) {
           var state = this.rolelist[i].state
-          if (state == 0) {
-            this.rolelist[i].state = false
-          } else if (state == 1) {
+          if (state == 1) {
             this.rolelist[i].state = true
+          } else if (state == 0) {
+            this.rolelist[i].state = false
           }
-        }
-        /* for (var i = 0; i < this.rolelist.length; i++) {
-
-          this.rolelistA.uId =this.rolelist[i].uId
-            console.log(this.rolelistA.uId)
-            
-            this.rolelistA.uName=this.rolelist[i].uName
-            console.log(this.rolelistA.uName)
-  
-            this.rolelistA.uRole=this.rolelist[i].uRole
-            console.log(this.rolelistA.uRole)
-          var state = this.rolelist[i].uState
-          if (state == 0) {
-            this.rolelist[i].uState = false
-          } else if (state == 1) {
-            this.rolelist[i].uState = true
-          } */
-        /*  var a = this.rolelist[i].uPermission
-          console.log(a)
-          if(a !== 'null'){
-            this.rolelist[i].uState = true
-          console.log(this.rolelist[i].uPermission)
-          console.log(this.rolelist[i].uState)
-        } else{
-        this.rolelist[i].uState = false
-        console.log(this.rolelist[i].uPermission)
-        console.log(this.rolelist[i].uState)
-        
-        } */
-
-        /* 创建修改权限的表格data */
-        /* var tempItems = ["add", "delete", "update", "search"]
-        this.rightslist = {}
-        this.items = []
-        this.rightslist.permission = tempItems */
-        /* } */
+        }        
         console.log("有没有东西2")
         console.log("--------- 这是是获取所有角色的列表结束 ---------")
       },
@@ -191,64 +133,38 @@
         /* 先清空再获取 */
         this.items = []
         this.dialogVisible = true,
-          // this.roleId = role.uId
-          // 获取所有权限的数据
-          // 把获取到的权限数据保存到 data 中
-          // this.rightslist = res.data
-          console.log("role:" + role)
-        this.udpId = role.uId
+        console.log("role:" + role)
+        this.udpId = role.id
         console.log("udpId是：" + this.udpId)
-        //this.rightslist.permission = role.uPermission
-        /* 测试rightslist */
-        console.log("role.uPermission:" + role.uPermission)
-        /* this.rightslist = {} */
-        const arrP = role.uPermission.split(",")
-        console.log("arrP：" + arrP)
-        /* this.rightslist.permission = arrP */
-        for (var i = 0; i < arrP.length; i++) {
-          this.items[i] = arrP[i]
-          console.log("arrP[i]:" + arrP[i])
-          console.log("this.items[i]:" + this.items[i])
-
-        }
-        /* this.items = ["add","de"] */
-        /* console.log(this.rightslist)
-        console.log(this.rightslist.permission) */
-        /* this.rightslist.items = [] */
-        /* console.log(this.rightslist.permission[0]) */
         console.log("有没有执行到这里")
         console.log("--------- 这是是分配权限结束 ---------")
       },
       // 分配权限对话框的的确定事件
-      async modifyPermission() {
+      async modifyRole() {
         console.log("--------- 这是开始点击分配权限对话框 ---------")
-
         console.log("分配权限-点击了确定")
-        console.log(this.items)
-        console.log(this.items)
-        console.log(this.udpId)
         const {
           data: res
-        } = await this.$http.post("user/setUser", {
-          uId: this.udpId,
-          uPermission: this.items.toString()
+        } = await this.$http.post("user/setuser", {
+          id: this.udpId,
+          role: this.changeRole
         })
         if (res.code !== 200) {
           return this.$message.error('修改权限失败！')
         }
         console.log(res)
         this.$message.success('修改权限成功！')
+        /* 关闭对话框 */
         this.dialogVisible = false
+        /* 清空选择过的选项 */
+        this.changeRole =""
+        /* 重新加载页面 */
         this.getRolesList()
-
         console.log("--------- 这是点击分配权限对话框结束 ---------")
       }
-
     }
   }
-
 </script>
-
 <style lang="less" scoped>
   .el-tag {
     margin: 7px;
